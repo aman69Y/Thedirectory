@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="row">
+  <div class="col-md-8">
+    <div class="infocard mb-3">
+      <form method="get">
+        <div class="input-group">
+          <input class="form-control" name="q" value="{{ request.args.get('q', '') }}" placeholder="Search users by username">
+          <button class="btn btn-primary">Search</button>
+        </div>
+      </form>
+    </div>
+
+    <div class="infocard mb-3">
+      <h6>People</h6>
+      {% if users %}
+        <div class="list-group">
+        {% for u in users %}
+          <div class="list-group-item d-flex justify-content-between align-items-center">
+            <div>
+              <a href="{{ url_for('profile.view_profile', username=u.username) }}">@{{ u.username }}</a>
+              {% if u.bio %}<div class="small text-muted">{{ u.bio }}</div>{% endif %}
+            </div>
+            <div>
+              <a class="btn btn-sm btn-outline-primary" href="{{ url_for('friends.add_friend', username=u.username) }}">Add Friend</a>
+              <a class="btn btn-sm btn-outline-danger" href="{{ url_for('friends.unfriend', username=u.username) }}">Unfriend</a>
+            </div>
+          </div>
+        {% endfor %}
+        </div>
+      {% else %}
+        <div class="text-muted">No users found.</div>
+      {% endif %}
+    </div>
+
+    <div class="infocard mb-3">
+      <h6>Incoming Requests</h6>
+      {% if incoming %}
+        {% for r in incoming %}
+          <div class="d-flex gap-2 align-items-center mb-2">
+            <span>From <a href="{{ url_for('profile.view_profile', username=r.sender.username) }}">@{{ r.sender.username }}</a></span>
+            <a class="btn btn-sm btn-success" href="{{ url_for('friends.accept', req_id=r.id) }}">Accept</a>
+            <a class="btn btn-sm btn-outline-secondary" href="{{ url_for('friends.decline', req_id=r.id) }}">Decline</a>
+          </div>
+        {% endfor %}
+      {% else %}
+        <div class="text-muted">No incoming requests.</div>
+      {% endif %}
+    </div>
+
+    <div class="infocard mb-3">
+      <h6>Outgoing Requests</h6>
+      {% if outgoing %}
+        {% for r in outgoing %}
+          <div class="small">To <a href="{{ url_for('profile.view_profile', username=r.receiver.username) }}">@{{ r.receiver.username }}</a> • pending</div>
+        {% endfor %}
+      {% else %}
+        <div class="text-muted">No outgoing requests.</div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}

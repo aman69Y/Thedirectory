@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="row">
+  <div class="col-md-8">
+    <div class="infocard mb-3">
+      {% if edit %}
+        <h5>Edit Profile</h5>
+        <form method="post">
+          <div class="mb-2">
+            <label class="form-label">Username</label>
+            <input class="form-control" name="username" value="{{ user.username }}" required>
+          </div>
+          <div class="mb-2">
+            <label class="form-label">Bio</label>
+            <textarea class="form-control" name="bio" rows="3">{{ user.bio }}</textarea>
+          </div>
+          <button class="btn btn-primary btn-sm">Save</button>
+          <a class="btn btn-link btn-sm" href="{{ url_for('profile.view_profile', username=user.username) }}">Cancel</a>
+        </form>
+      {% else %}
+        <div class="d-flex justify-content-between">
+          <div>
+            <h4 class="mb-0">@{{ user.username }}</h4>
+            <div class="text-muted small">Joined {{ user.joined_at.strftime('%Y-%m-%d') }}</div>
+          </div>
+          {% if is_self %}
+            <a class="btn btn-sm btn-outline-secondary" href="{{ url_for('profile.edit_profile') }}">Edit Profile</a>
+          {% endif %}
+        </div>
+        {% if user.bio %}<p class="mt-2">{{ user.bio | e }}</p>{% endif %}
+      {% endif %}
+    </div>
+
+    {% if posts %}
+      {% for post in posts %}
+        <div class="infocard mb-3">
+          <div class="fw-semibold">@{{ user.username }}</div>
+          <div class="text-muted small">{{ post.timestamp.strftime('%Y-%m-%d %H:%M') }}</div>
+          <div class="mt-2" style="white-space: pre-wrap;">{{ post.content | e }}</div>
+        </div>
+      {% endfor %}
+    {% else %}
+      <div class="infocard">No posts yet.</div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}
