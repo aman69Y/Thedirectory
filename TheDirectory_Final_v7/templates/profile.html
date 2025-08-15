@@ -1,0 +1,36 @@
+{% extends 'base.html' %} {% block content %}
+<div class="row">
+  <div class="col-md-4">
+    <div class="infocard mb-3 d-flex align-items-center">
+      <div class="me-3">
+        {% if user.avatar_filename %}
+          <img src="{{ url_for('static', filename='uploads/avatars/' ~ user.avatar_filename) }}" class="rounded" width="96" height="96">
+        {% else %}
+          <img src="{{ config.DEFAULT_AVATAR }}" class="rounded" width="96" height="96">
+        {% endif %}
+      </div>
+      <div>
+        <h4 class="mb-0">@{{ user.username }}</h4>
+        <div class="text-muted small">Joined {{ user.joined_at.strftime('%Y-%m-%d') }}</div>
+        <div class="mt-2"><strong>{{ friend_count }}</strong> friends</div>
+      </div>
+    </div>
+    <div class="infocard">
+      <h6>People</h6>
+      {% for f in user.friends %}<div><a href="{{ url_for('profile.view_profile', username=f.username) }}">@{{ f.username }}</a></div>{% endfor %}
+      {% for f in user.friend_of %}{% if f.id not in (user.friends|map(attribute='id')|list) %}<div><a href="{{ url_for('profile.view_profile', username=f.username) }}">@{{ f.username }}</a></div>{% endif %}{% endfor %}
+    </div>
+  </div>
+  <div class="col-md-8">
+    <div class="infocard mb-3">
+      <form method="get" action="{{ url_for('profile.profile_search', username=user.username) }}">
+        <div class="input-group">
+          <input name="q" class="form-control" placeholder="Search {{ user.username }}'s posts..." value="{{ request.args.get('q','') }}">
+          <button class="btn btn-outline-secondary">Search</button>
+        </div>
+      </form>
+    </div>
+    {% for post in posts %}{% include '_post.html' %}{% else %}<div class="infocard">No posts yet.</div>{% endfor %}
+  </div>
+</div>
+{% endblock %}

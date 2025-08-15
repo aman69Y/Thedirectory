@@ -1,0 +1,76 @@
+{% extends 'base.html' %} {% block content %}
+<div class="row">
+  <div class="col-md-4">
+    <div class="infocard">
+      <a class="btn btn-sm btn-outline-secondary mb-2" href="{{ url_for('messages.index') }}">← Back to chats</a>
+      <div class="d-flex align-items-center">
+        {% if chat.is_group %}
+          {% if chat.group_avatar %}
+            <img src="{{ url_for('static', filename='uploads/groups/' ~ chat.group_avatar) }}" width="48" height="48" class="rounded-circle me-2">
+          {% else %}
+            <img src="{{ config.DEFAULT_AVATAR }}" width="48" height="48" class="rounded-circle me-2">
+          {% endif %}
+          <div><div class="fw-semibold">{{ chat.name }}</div><div class="small text-muted">Group chat</div></div>
+        {% else %}
+          {% set other = (members | selectattr('id','ne', current_user.id) | list).0 %}
+          {% if other.avatar_filename %}
+            <img src="{{ url_for('static', filename='uploads/avatars/' ~ other.avatar_filename) }}" width="48" height="48" class="rounded-circle me-2">
+          {% else %}
+            <img src="{{ config.DEFAULT_AVATAR }}" width="48" height="48" class="rounded-circle me-2">
+          {% endif %}
+          <div><div class="fw-semibold">{{ other.username }}</div><div class="small text-muted">Direct message</div></div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+  <div class="col-md-8" id="chat-area">
+    <div class="infocard d-flex flex-column">
+      <div id="chat-window" class="chat-window flex-grow-1" data-chat-id="{{ chat.id }}" style="height:60vh; overflow:auto;">
+        {% for m in messages %}
+          <div class="msg {{ 'me' if m.sender_id==current_user.id else 'them' }}" data-id="{{ m.id }}">
+            <div class="bubble">
+              <div class="meta small text-muted">
+                <span class="sender">{{ m.sender.username }}</span> • <span class="time">{{ m.timestamp.strftime('%Y-%m-%d %H:%M') }}</span>
+                {% if m.sender_id==current_user.id %}<button class="btn btn-link btn-sm p-0 ms-2 text-danger msg-delete" data-id="{{ m.id }}">delete</button>{% endif %}
+              </div>
+              <div class="content">{{ m.content | e }}</div>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+      <div class="mt-2 d-flex gap-2">
+        <input class="form-control" id="send-input" placeholder="Message..." autocomplete="off">
+        <button class="btn btn-outline-secondary" id="gif-btn">GIF</button>
+        <button class="btn btn-primary" id="send-btn">Send</button>
+      </div>
+      <div class="mt-2">
+        {% if chat.is_group %}
+        <form method="post" action="{{ url_for('messages.add_member', chat_id=chat.id) }}" class="d-flex gap-2 align-items-center">
+          <select name="user_id" class="form-select form-select-sm">
+            <option value="">Add member...</option>
+            {% for u in (members) %}
+              {% if u.id != current_user.id %}
+                <option value="{{ u.id }}">@{{ u.username }}</option>
+              {% endif %}
+            {% endfor %}
+          </select>
+          <button class="btn btn-sm btn-outline-primary">Add</button>
+        </form>
+        {% endif %}
+        {% if chat.created_by==current_user.id %}
+        <form method="post" action="{{ url_for('messages.upload_group_avatar', chat_id=chat.id) }}" enctype="multipart/form-data" class="mt-2">
+          <label class="form-label small">Change group avatar (owner)</label>
+          <input type="file" name="group_avatar" accept="image/*">
+          <button class="btn btn-sm btn-outline-secondary mt-1">Upload</button>
+        </form>
+        {% endif %}
+      </div>
+      <div id="gif-search-modal" class="d-none mt-2">
+        <div class="input-group mb-2"><input class="form-control" id="gif-query" placeholder="Search GIFs..."><button class="btn btn-secondary" id="gif-search">Search</button></div>
+        <div id="gif-results" class="d-flex gap-2 flex-wrap"></div>
+      </div>
+    </div>
+  </div>
+</div>
+<script>window.__CHAT_ID__ = {{ chat.id }}; window.__CURRENT_USER_ID__ = {{ current_user.id }};</script>
+{% endblock %}

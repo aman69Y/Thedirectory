@@ -1,0 +1,4 @@
+{% extends 'base.html' %} {% block content %}
+<div class="row"><div class="col-md-8"><div class="infocard mb-3"><h5>Search results for '{{ query }}'</h5></div>
+<div class="infocard mb-3"><h6>People</h6>{% if users %}<div class="list-group">{% for u in users %}<a class="list-group-item" href="{{ url_for('profile.view_profile', username=u.username) }}">@{{ u.username }}</a>{% endfor %}</div>{% else %}<div class="text-muted">No people found.</div>{% endif %}</div>
+<div class="infocard mb-3"><h6>Posts</h6>{% if posts %}{% for p in posts %}{% include '_post.html' %}{% endfor %}{% else %}<div class="text-muted">No posts found.</div>{% endif %}</div></div></div>{% endblock %}
