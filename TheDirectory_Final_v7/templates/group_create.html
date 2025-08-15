@@ -1,0 +1,15 @@
+{% extends 'base.html' %} {% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-6">
+    <div class="infocard">
+      <h5>Create Group</h5>
+      <form method="post" enctype="multipart/form-data">
+        <div class="mb-2"><label class="form-label">Group name</label><input class="form-control" name="name" required></div>
+        <div class="mb-2"><label class="form-label">Group avatar</label><input class="form-control" type="file" name="group_avatar" accept="image/*"></div>
+        <div class="mb-2"><label class="form-label">Add friends</label><div class="d-flex flex-wrap gap-2">{% for f in friends %}<label class="badge bg-light text-dark p-2 border rounded"><input type="checkbox" name="members" value="{{ f.id }}"> @{{ f.username }}</label>{% endfor %}</div></div>
+        <button class="btn btn-primary">Create</button>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

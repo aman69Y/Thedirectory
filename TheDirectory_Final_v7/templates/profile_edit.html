@@ -1,0 +1,8 @@
+{% extends 'base.html' %} {% block content %}
+<div class="row"><div class="col-md-8"><div class="infocard">
+<h5>Edit Profile</h5><form method="post" enctype="multipart/form-data">
+<div class="mb-2"><label class="form-label">Username</label><input class="form-control" name="username" value='{{ user.username }}' required></div>
+<div class="mb-2"><label class="form-label">Bio</label><textarea class="form-control" name="bio" rows="3">{{ user.bio }}</textarea></div>
+<div class="mb-2"><label class="form-label">Avatar</label><input class="form-control" type="file" name="avatar" accept="image/*"></div>
+<button class="btn btn-primary btn-sm">Save</button><a class="btn btn-link btn-sm" href="{{ url_for('profile.view_profile', username=user.username) }}">Cancel</a></form></div></div></div>
+{% endblock %}

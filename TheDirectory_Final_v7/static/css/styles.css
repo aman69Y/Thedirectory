@@ -1,0 +1,13 @@
+body { background: #f8f9fa; color: #222; font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial; }
+a { color: #0645AD; text-decoration: none; } a:hover { text-decoration: underline; }
+.infocard { background: #fff; border: 1px solid #dcdcdc; border-radius: 8px; padding: 12px 14px; margin-bottom:12px; }
+/* messaging */
+.msg { display:flex; margin:6px 0; }
+.msg.me { justify-content: flex-end; }
+.msg .bubble { max-width:75%; padding:8px 12px; border-radius:18px; position:relative; box-shadow: 0 1px 0 rgba(0,0,0,0.03); }
+.msg.me .bubble { background:#dcf8c6; border-bottom-right-radius:6px; border-bottom-left-radius:18px; border-top-right-radius:6px; }
+.msg.them .bubble { background:#fff; border-bottom-left-radius:6px; border-bottom-right-radius:18px; border-top-left-radius:6px; }
+.msg.me .bubble::after { content:''; position:absolute; right:-8px; bottom:8px; width:0; height:0; border-left:8px solid #dcf8c6; border-top:8px solid transparent; border-bottom:8px solid transparent; }
+.msg.them .bubble::after { content:''; position:absolute; left:-8px; bottom:8px; width:0; height:0; border-right:8px solid #fff; border-top:8px solid transparent; border-bottom:8px solid transparent; }
+#gif-results img { cursor:pointer; border-radius:8px; max-width:160px; }
+#notif-badge { font-size:0.7rem; }

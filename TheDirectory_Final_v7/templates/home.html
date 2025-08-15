@@ -1,0 +1,59 @@
+{% extends 'base.html' %} {% block content %}
+<div class="row">
+  <div class="col-md-8" id="feed-column">
+    <div class="infocard mb-3">
+      <form id="post-form" enctype="multipart/form-data">
+        <label class="form-label fw-semibold">Share an update</label>
+        <textarea id="post-content" class="form-control" name="content" rows="2" placeholder="What's happening?"></textarea>
+        <div class="d-flex align-items-center gap-2 mt-2">
+          <input class="form-control form-control-sm" type="file" name="media" accept="image/*,video/*">
+          <button class="btn btn-sm btn-primary" id="post-send">Post</button>
+        </div>
+      </form>
+    </div>
+    <div id="posts-list">{% for post in posts %}{% include '_post.html' %}{% endfor %}</div>
+  </div>
+  <div class="col-md-4 d-none d-md-block">
+    <div class="infocard">
+      <h6>Friend Activity</h6>
+      <div class="small text-muted">
+        {% set activities = [] %}
+        {% for f in current_user.friends %}
+          {% for p in f.posts if not p.deleted %}
+            {% set _ = activities.append(p) %}
+          {% endfor %}
+        {% endfor %}
+        {% set activities = (activities|sort(attribute='timestamp', reverse=True))[:5] %}
+        {% if activities %}
+          <ul class="list-unstyled mb-0">
+          {% for a in activities %}
+            <li><a href="{{ url_for('profile.view_profile', username=a.author.username) }}">@{{ a.author.username }}</a>: {{ a.content[:60] }}{% if a.content|length>60 %}...{% endif %}</li>
+          {% endfor %}
+          </ul>
+        {% else %}
+          No recent activity from friends.
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Share modal -->
+<div class="modal" tabindex="-1" id="shareModal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header"><h5 class="modal-title">Share Post</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+      <div class="modal-body">
+        <input type="hidden" id="share-post-id">
+        <div class="mb-2"><label class="form-label">Choose friend</label><select id="share-friend" class="form-select">
+          <option value="">Select...</option>
+          {% for f in current_user.friends %}<option value="{{ f.id }}">@{{ f.username }}</option>{% endfor %}
+          {% for f in current_user.friend_of %}{% if f.id not in (current_user.friends|map(attribute='id')|list) %}<option value="{{ f.id }}">@{{ f.username }}</option>{% endif %}{% endfor %}
+        </select></div>
+      </div>
+      <div class="modal-footer"><button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button><button class="btn btn-primary" id="share-confirm">Share</button></div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

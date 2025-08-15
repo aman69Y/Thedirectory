@@ -1,0 +1,42 @@
+<div class="infocard mb-3" id="post-{{ post.id }}">
+  <div class="d-flex justify-content-between align-items-center">
+    <div class="d-flex align-items-center">
+      {% if post.author.avatar_filename %}
+        <img src="{{ url_for('static', filename='uploads/avatars/' ~ post.author.avatar_filename) }}" class="rounded-circle me-2" width="32" height="32">
+      {% else %}
+        <img src="{{ config.DEFAULT_AVATAR }}" class="rounded-circle me-2" width="32" height="32">
+      {% endif %}
+      <div>
+        <a class="fw-semibold" href="{{ url_for('profile.view_profile', username=post.author.username) }}">@{{ post.author.username }}</a>
+        <div class="small text-muted">{{ post.timestamp.strftime('%Y-%m-%d %H:%M') }}</div>
+      </div>
+    </div>
+    <div class="d-flex gap-2">
+      <button class="btn btn-sm btn-outline-secondary like-btn" data-id="{{ post.id }}">♥ <span class="like-count">{{ post.likes|length }}</span></button>
+      <button class="btn btn-sm btn-outline-info share-post-btn" data-id="{{ post.id }}">Share</button>
+      {% if post.user_id == current_user.id %}
+      <button class="btn btn-sm btn-outline-danger delete-post-btn" data-id="{{ post.id }}">Delete</button>
+      {% endif %}
+    </div>
+  </div>
+  <div class="mt-2 post-content">{{ post.content | e }}</div>
+  {% if post.media_filename %}
+    {% set ext = (post.media_filename.rsplit('.', 1) | last | lower) %}
+    <div class="mt-2">
+      {% if ext in ['png','jpg','jpeg','gif'] %}
+        <img class="img-fluid rounded" src="{{ url_for('static', filename='uploads/posts/' ~ post.media_filename) }}" alt="media">
+      {% elif ext in ['mp4','webm'] %}
+        <video class="w-100 rounded" controls src="{{ url_for('static', filename='uploads/posts/' ~ post.media_filename) }}"></video>
+      {% endif %}
+    </div>
+  {% endif %}
+  <div class="mt-3 comments" data-post-id="{{ post.id }}">
+    <form class="comment-form d-flex gap-2" data-post-id="{{ post.id }}">
+      <input class="form-control form-control-sm comment-input" name="comment" placeholder="Write a comment">
+      <button class="btn btn-sm btn-outline-primary comment-send">Reply</button>
+    </form>
+    <div class="mt-2 ps-2 border-start comments-list">
+      {% for c in post.comments if not c.deleted %}{% include '_comment.html' %}{% endfor %}
+    </div>
+  </div>
+</div>

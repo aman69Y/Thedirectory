@@ -1,0 +1,29 @@
+{% extends 'base.html' %} {% block content %}
+<div class="row">
+  <div class="col-md-4">
+    <div class="infocard mb-3 d-flex justify-content-between align-items-center">
+      <h6 class="mb-0">Chats</h6>
+      <a class="btn btn-sm btn-outline-primary" href="{{ url_for('messages.create_group') }}">+ Group</a>
+    </div>
+    <div class="infocard chat-list" style="max-height:70vh; overflow:auto;">
+      {% for info in chats %}
+        <a class="chat-list-item d-flex align-items-center" href="{{ url_for('messages.chat', chat_id=info.chat.id) }}">
+          {% if info.avatar %}
+            <img src="{{ url_for('static', filename='uploads/avatars/' ~ info.avatar) }}" onerror="this.onerror=null;this.src='{{ config.DEFAULT_AVATAR }}'" width="40" height="40" class="rounded-circle me-2">
+          {% else %}
+            <img src="{{ config.DEFAULT_AVATAR }}" width="40" height="40" class="rounded-circle me-2">
+          {% endif %}
+          <div class="flex-grow-1">
+            <div class="fw-semibold">{{ info.name or ('Chat ' ~ info.chat.id) }}</div>
+            <div class="small text-muted">{{ 'Group' if info.is_group else 'Private' }}</div>
+          </div>
+        </a>
+      {% endfor %}
+      <div class="mt-3"><div class="small mb-2">Start a DM</div>{% for f in friends %}<a class="btn btn-sm btn-outline-secondary me-1 mb-1" href="{{ url_for('messages.start_dm', user_id=f.id) }}">@{{ f.username }}</a>{% endfor %}</div>
+    </div>
+  </div>
+  <div class="col-md-8" id="chat-area">
+    <div class="infocard"><div class="text-muted">Select a chat from the list.</div></div>
+  </div>
+</div>
+{% endblock %}
