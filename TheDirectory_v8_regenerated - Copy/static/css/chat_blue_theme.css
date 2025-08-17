@@ -1,0 +1,44 @@
+/* IG Messenger Blue Theme */
+.msg.them .bubble {
+    background: #0084ff;
+    color: white;
+    border-bottom-left-radius: 6px;
+    border-bottom-right-radius: 18px;
+    border-top-left-radius: 6px;
+}
+
+.msg.them .bubble::after {
+    border-right: 8px solid #0084ff;
+}
+
+/* WhatsApp-like message input styling */
+#send-input { 
+    background-color: #f0f2f5 !important;
+    border: none !important;
+    border-radius: 8px !important;
+    padding: 10px 15px !important;
+    color: #111b21 !important;
+    font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial !important;
+}
+
+#send-input:focus {
+    outline: none !important;
+    box-shadow: none !important;
+}
+
+#send-input::placeholder {
+    color: #667781 !important;
+}
+
+#gif-btn, #send-btn {
+    background-color: #00a884 !important;
+    border: none !important;
+    border-radius: 8px !important;
+    color: white !important;
+    padding: 8px 15px !important;
+    font-weight: bold !important;
+}
+
+#gif-btn:hover, #send-btn:hover {
+    background-color: #008c69 !important;
+}
